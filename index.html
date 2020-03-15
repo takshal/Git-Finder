@@ -1,0 +1,163 @@
+<html>
+ 	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<style>
+		body{	font-family: 'Lobster', cursive; background-color:#D9D9D6;}
+		</style>
+</head>
+<body>
+<style type="text/css">
+	body{
+		padding: 30px;
+	}
+</style>
+	<form>
+		<div class="container" style="background-color: #fff;">
+			<div class="row text-center">
+				<h1 style="font-size:28px; font-weight:400; color:#00B373;">Git Finder</h1>
+				<h4 style="font-weight:400; color:#1f1f14;">--by Tojojo</h4>
+			</div>
+			<div class="row" style="padding-top: 20px;">
+				<div class="col-md-4">				
+					  <div class="form-group">
+					    <label for="formGroupExampleInput">Domain Name</label>
+					    <input type="text" class="form-control" id="domain" placeholder="Example input">
+					  </div>
+				</div>
+				<div class="col-md-4">
+					  <div class="form-group">
+					    <label for="formGroupExampleInput2">Access Token</label>
+					    <input type="text" class="form-control" id="access_token" placeholder="Another input">
+					  </div>
+				</div>
+				<div class="col-md-4">	  
+					<div class="form-group">
+					    <label for="formGroupExampleInput2">Query</label>
+					    <select class="form-control" id="query">
+					      <option value="password">Password</option>
+					      <option value="api_key">Api_key</option>
+					      <option value="secret_key" >Secret Key</option>
+							<option value="auth_token" >Auth token</option>
+							<option value="token_key" >Token Key</option>
+							<option value="AWS_Token" >AWS_Token</option>
+							<option value="pass_key" >pass_key</option>
+							<option value="jdbc:mysql" >jdbc:mysql</option>
+							<option value="db_password" >db password</option>
+							<option value="google_key">Google Key</option>
+							<option value="config_key" >Config Key</option>
+					    </select>
+				 	</div>
+				</div>
+				<div class="col-md-12">	
+					<div class="form-group">
+						<button class="btn btn-success" type="button" style="background-color:#00B373;" onclick="submitform()">Find On Github</button>
+					  </div>
+				</div>	  
+			</div>	  	
+		</div>
+</form>
+
+<div class="row">
+	<div class="container" style="padding: 30px;">
+			<div class="col-md-12">
+				<div align="center"><img src="loding.gif" id='waitingImg' style="display: none;" ></div>		
+				<div id="tablediv">
+					<table  id="example" class="table table-striped responsive"  cellspacing="0" width="50%">
+        				<thead>
+            				<tr>
+								<th>Full Name</th>
+				                <th>Path</th>
+				                <th>GIT URL</th>
+				                <th>Secret 1</th>
+				                <th>Secret 2</th>
+            				</tr>
+        				</thead>
+        				<tbody></tbody>
+    				</table>
+				</div>
+
+			</div>
+	</div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
+
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script>
+
+ var table = $('#example').DataTable({ 
+       
+    });//End of create main table
+$(document).ready(function() {
+    $('#example').DataTable( {
+        responsive: {
+            details: {
+                display: $.fn.dataTable.Responsive.display.modal( {
+                    header: function ( row ) {
+                        var data = row.data();
+                        return 'Details for '+data[0]+' '+data[1];
+                    }
+                } ),
+                renderer: $.fn.dataTable.Responsive.renderer.tableAll( {
+                    tableClass: 'table'
+                } )
+            }
+        }
+    } );
+} );
+
+$('#tablediv').css('visibility','hidden');
+function submitform(){
+var domain = $('#domain').val();
+var access_token = $('#access_token').val();
+var query = $('#query').val();
+var iterator =1;
+
+var url= 'https://api.github.com/search/code?q="' +domain+ '"+"' +query+ '"+sort:indexed-desc&access_token=' +access_token+ '&per_page=100&page=' + iterator;
+
+var allData = [];	
+$.ajax({
+    url: url,
+    beforeSend: function() {
+        // setting a timeout
+        $('#waitingImg').css('display','block');
+
+    },
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+	'Accept': 'application/vnd.github.v3.text-match+json',
+	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1521.3 Safari/537.36'
+    },
+    method: 'GET',
+    dataType: 'json',
+    success: function(data){
+	var items = data.items;
+	items.forEach(function (item)
+	{
+		var fragment1 = "";
+		var fragment2 = "";
+		if(item.text_matches[0]!=undefined)
+		var fragment1 = item.text_matches[0].fragment;
+		if(item.text_matches[1]!=undefined)
+		var fragment2 = item.text_matches[1].fragment;
+		table.row.add([item.repository.full_name, item.path, '<a target="_blank" href="'+item.html_url+'"> Click Here  </a>', '<code>'+ fragment1 +'</code>', '<code>'+ fragment1 +'</code>']);
+table.draw();
+        $('#waitingImg').css('display','none');
+$('#tablediv').css('visibility','visible');
+	})
+    }
+  });
+
+}
+</script>
