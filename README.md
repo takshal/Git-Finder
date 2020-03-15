@@ -19,4 +19,4 @@ Or simple start your apacheserver using this command:- service apache2 start
 You can Also Start python simple server
 
 # Authors
-<b>--Tojojo</b> @
+<b>--Tojojo</b> <a href="https://twitter.com/TakshalPatel3">@takshal Patel</a>
